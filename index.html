@@ -48,6 +48,7 @@ function getLocalResource(resloc,resdatatype) {
 function getPDF(fn,subm_data,pdftool,signpdf,lockpdf) {
    console.log('Getting PDF for xsl '+fn+'...');
    var xsld = [location.protocol, '//', location.host, location.pathname].join('') + "xsl/" + fn + '.xsl';   
+   var prexsld = [location.protocol, '//', location.host, location.pathname].join('') + "xsl/twf.xsl';   
    
 var newTabWindow = window.open('waiting_for_pdf.html');
    
@@ -55,7 +56,7 @@ var req = new XMLHttpRequest();
 req.open("POST", "https://sasapdfproxy.azurewebsites.net/pdf", true);
 req.responseType = "text";
 req.setRequestHeader("Content-type", "application/json");
-req.send('{"data" : '+JSON.stringify(subm_data)+',"xsl" : "'+xsld+'","lockPdfWithPassword" : '+lockpdf+',"signPdf":'+signpdf+',"pdf_tool_name":"'+pdftool+'"}');
+req.send('{"data" : '+JSON.stringify(subm_data)+',"xsl" : "'+xsld+',"xslPre" : "'+prexsld+'","lockPdfWithPassword" : '+lockpdf+',"signPdf":'+signpdf+',"pdf_tool_name":"'+pdftool+'"}');
 
 req.onload = function (event) {
    var d = new Date();
