@@ -6,7 +6,8 @@
    <script src='lib/formio.full.min.js'></script>
    <script src='lib/jquery-3.2.1.min.js'></script>
    <script src='calc/calc.js'></script>
-   <script src='json/form.json.js'></script>
+   <!--<script src='json/form.json.js'></script>-->
+   <script src='json/hreleasing.json.js'></script>
    
    <script type='text/javascript'>
 var form = null;
@@ -70,11 +71,10 @@ window.onload = function() {
       
       form.ready.then(function() {
          
-//         console.log('qs='+JSON.stringify(qs));
          console.log('fs='+JSON.stringify(form.submission));
 //         var datamerged = $.extend(form.submission.data, qs);
 //         console.log('jsonmerge='+JSON.stringify(datamerged));
-         var initdata = calculate(form.submission);
+         var initdata = calculate(form.submission.data);
          console.log('id='+JSON.stringify(initdata));
          var initjson = JSON.parse('{"data":'+JSON.stringify(initdata)+'}');
          form.submission = initjson;
