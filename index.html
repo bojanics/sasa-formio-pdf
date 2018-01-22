@@ -1,5 +1,6 @@
 ﻿<html>
 <head>
+  <meta charset="utf-8">
    <link rel='stylesheet' href='lib/bootstrap.min.css'>
    <link rel='stylesheet' href='lib/formio.full.min.css'>
    <script src='lib/formio.full.min.js'></script>
@@ -56,22 +57,24 @@ req.onload = function (event) {
 window.onload = function() {
   Formio.createForm(document.getElementById('formio'), formObj,{i18n: {lng: 'de-AT', resources: {}}}).then(function(form) {
 
+      var query = window.location.search.substring(1);
+      var qs = '{}';
+      if (query!=null && query!='') {
+         var qs = parse_query_string(query);
+      }
+      var fa = qs['inpfinanceamount'];
+      if (fa) {
+         qs['inpfinanceamount']=parseInt(fa);
+      }
+      form.submission = {"data":qs};  
+      
       form.ready.then(function() {
-         var query = window.location.search.substring(1);
-         var qs = '{}';
-         if (query!=null && query!='') {
-            var qs = parse_query_string(query);
-         }
-         var fa = qs['inpfinanceamount'];
-         if (fa) {
-            qs['inpfinanceamount']=parseInt(fa);
-         }
          
-         console.log('qs='+JSON.stringify(qs));
+//         console.log('qs='+JSON.stringify(qs));
          console.log('fs='+JSON.stringify(form.submission));
-         var datamerged = $.extend(form.submission.data, qs);
-         console.log('jsonmerge='+JSON.stringify(datamerged));
-         var initdata = calculate(datamerged);
+//         var datamerged = $.extend(form.submission.data, qs);
+//         console.log('jsonmerge='+JSON.stringify(datamerged));
+         var initdata = calculate(form.submission);
          console.log('id='+JSON.stringify(initdata));
          var initjson = JSON.parse('{"data":'+JSON.stringify(initdata)+'}');
          form.submission = initjson;
