@@ -2886,7 +2886,7 @@
 <!-- also relativ zum Aufrufort des xsl files, OK!!! 22.9.2016 -->
 <!-- moz, 23.9.2016, in Abstimmung mit Alfred derzeit FIXER Pfad bis in WebBase neu geloest !!! -->
 
-<xsl:variable name="common_img" select="concat($xxbasedir,'COMMON_IMGs','/')" />
+<xsl:variable name="common_img" select="concat($xxbasedir,'COMMON_IMG','/')" />
 <xsl:variable name="special_img" select="concat($xxbasedir,'..','/','IMG','/')" />
 
 <!--<xsl:variable name="common_img"  select="'//A000S11/templstore/COMMON_IMG/'" /> -->
