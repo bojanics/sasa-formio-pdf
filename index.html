@@ -28,23 +28,6 @@ function parse_query_string(query) {
   return query_string;
 }   
 
-function getLocalResource(resloc,resdatatype) {
-   var res =(function() {
-     var resdata = null;
-     $.ajax({
-         'async': false,
-         'global': false,
-         'url': resloc,
-         'dataType': resdatatype,
-         'success': function (data) {
-             resdata = data;
-         }
-     });
-     return resdata;
-   })();
-   return res;
-}
-
 function getPDF(fn,subm_data,pdftool,signpdf,lockpdf) {
    console.log('Getting PDF for xsl '+fn+'...');
    var xsld = [location.protocol, '//', location.host, location.pathname].join('') + "xsl/" + fn + '.xsl';   
@@ -70,68 +53,69 @@ req.onload = function (event) {
 }   
 
 window.onload = function() {
-  jsonform = getLocalResource("json/hrleasing.json","json");
-  form = new FormioForm(document.getElementById('formio'),{i18n: {lng: 'de-AT', resources: {}}});
-  form.form = jsonform;
+  Formio.createForm(document.getElementById('formio'), formObj,{i18n: {lng: 'de-AT', resources: {}}}).then(function(form) {
 
-   form.ready.then(function() {
-      var query = window.location.search.substring(1);
-      var qs = '{}';
-      if (query!=null && query!='') {
-         var qs = parse_query_string(query);
-      }
-      var fa = qs['inpfinanceamount'];
-      if (fa) {
-         qs['inpfinanceamount']=parseInt(fa);
-      }
-      
-      console.log('qs='+JSON.stringify(qs));
-      console.log('fs='+JSON.stringify(form.submission));
-      var datamerged = $.extend(form.submission.data, qs);
-      console.log('jsonmerge='+JSON.stringify(datamerged));
-      var initdata = calculate(datamerged);
-      console.log('id='+JSON.stringify(initdata));
-      var initjson = JSON.parse('{"data":'+JSON.stringify(initdata)+'}');
-      form.submission = initjson;
-   });
+      form.ready.then(function() {
+         var query = window.location.search.substring(1);
+         var qs = '{}';
+         if (query!=null && query!='') {
+            var qs = parse_query_string(query);
+         }
+         var fa = qs['inpfinanceamount'];
+         if (fa) {
+            qs['inpfinanceamount']=parseInt(fa);
+         }
+         
+         console.log('qs='+JSON.stringify(qs));
+         console.log('fs='+JSON.stringify(form.submission));
+         var datamerged = $.extend(form.submission.data, qs);
+         console.log('jsonmerge='+JSON.stringify(datamerged));
+         var initdata = calculate(datamerged);
+         console.log('id='+JSON.stringify(initdata));
+         var initjson = JSON.parse('{"data":'+JSON.stringify(initdata)+'}');
+         form.submission = initjson;
+      });
      
-   form.on('customEvent', function(event) {
-      var should_sign_pdf = false;
-      var should_lock_pdf_with_password = false;
-      var pdf_tool_name = "ahformatter";
-      if(event.component.key.lastIndexOf("fop") == (event.component.key.length - "fop".length)) {
-         pdf_tool_name="fop";
-      } else if(event.component.key.lastIndexOf("altosoft") == (event.component.key.length - "altosoft".length)) {
-         pdf_tool_name="altosoft";
-      }
-      var isahf = event.component.key.lastIndexOf("ahformatter")!=-1;
-      if (isahf) {
-      console.log('ahformatter');
-         if(event.component.key.lastIndexOf("signed")!=-1) {
-            console.log('..signing');
-            should_sign_pdf=true;
+      form.on('customEvent', function(event) {
+         var should_sign_pdf = false;
+         var should_lock_pdf_with_password = false;
+         var pdf_tool_name = "ahformatter";
+         if(event.component.key.lastIndexOf("fop") == (event.component.key.length - "fop".length)) {
+            pdf_tool_name="fop";
+         } else if(event.component.key.lastIndexOf("altosoft") == (event.component.key.length - "altosoft".length)) {
+            pdf_tool_name="altosoft";
          }
-         if(event.component.key.lastIndexOf("password")!=-1) {
-            console.log('..pwd protecting');
-            should_lock_pdf_with_password=true;
-         }
-      }
-      if(event.component.key=='openPdfInBrowser') {
-         getPDF('get_allitems',event.data,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
-      } else {
-         if (event.type=='getSLeasingPDF') {               
-            if (event.component.key.lastIndexOf("fop") == (event.component.key.length - "fop".length)) {
-               alert('FOP currently can\'t do graphics');
-            } else {
-               getPDF('sleasing'+(isahf ? '' : '-fullimgpaths'),event.data,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
+         var isahf = event.component.key.lastIndexOf("ahformatter")!=-1;
+         if (isahf) {
+         console.log('ahformatter');
+            if(event.component.key.lastIndexOf("signed")!=-1) {
+               console.log('..signing');
+               should_sign_pdf=true;
             }
-         } else if (event.type=='getSLeasingPDFNoSVGAndImages') {
-            getPDF('sleasing-nosvgnoimages',event.data,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
-         } else if (event.type==='getPlainDataPDF') {
-            getPDF('get_allitems',event.data,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
+            if(event.component.key.lastIndexOf("password")!=-1) {
+               console.log('..pwd protecting');
+               should_lock_pdf_with_password=true;
+            }
          }
-      }
+         if(event.component.key=='openPdfInBrowser') {
+            getPDF('get_allitems',event.data,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
+         } else {
+            if (event.type=='getSLeasingPDF') {               
+               if (event.component.key.lastIndexOf("fop") == (event.component.key.length - "fop".length)) {
+                  alert('FOP currently can\'t do graphics');
+               } else {
+                  getPDF('sleasing'+(isahf ? '' : '-fullimgpaths'),event.data,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
+               }
+            } else if (event.type=='getSLeasingPDFNoSVGAndImages') {
+               getPDF('sleasing-nosvgnoimages',event.data,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
+            } else if (event.type==='getPlainDataPDF') {
+               getPDF('get_allitems',event.data,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
+            }
+         }
+      });
+   
    });
+   
   
 };
 
