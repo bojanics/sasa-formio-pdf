@@ -124,7 +124,7 @@ window.onload = function() {
                if (event.component.key.lastIndexOf("fop") == (event.component.key.length - "fop".length)) {
                   alert('FOP currently can\'t do graphics');
                } else {
-                  getPDF('sleasing'+(isahf ? '_sleasing_forms_io_v1' : '-fullimgpaths'),event.data,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
+                  getPDF('sleasing'+(isahf ? '_forms_io_v1' : '-fullimgpaths'),event.data,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
                }
             } else if (event.type=='getSLeasingPDFNoSVGAndImages') {
                getPDF('sleasing-nosvgnoimages',event.data,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
