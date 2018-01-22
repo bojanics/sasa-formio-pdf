@@ -70,14 +70,15 @@ window.onload = function() {
       form.submission = {"data":qs};  
       
       form.ready.then(function() {
-         
-//         console.log('fs='+JSON.stringify(form.submission));
-//         var datamerged = $.extend(form.submission.data, qs);
-//         console.log('jsonmerge='+JSON.stringify(datamerged));
-//         var initdata = calculate(form.submission.data);
-//         console.log('id='+JSON.stringify(initdata));
-//         var initjson = JSON.parse('{"data":'+JSON.stringify(initdata)+'}');
-//         form.submission = initjson;
+/*         
+         console.log('fs='+JSON.stringify(form.submission));
+         var datamerged = $.extend(form.submission.data, qs);
+         console.log('jsonmerge='+JSON.stringify(datamerged));
+         var initdata = calculate(form.submission.data);
+         console.log('id='+initdata);
+         var initjson = JSON.parse('{"data":'+initdata+'}');
+         form.submission = initjson;
+*/         
          
          $.ajax({
             url: calcfuncurl,
@@ -92,7 +93,6 @@ window.onload = function() {
          }).fail(function(jqXHR, textStatus, err) {
             console.log('submission failed, err='+err.toString()+', data='+JSON.stringify(event.data));
          });
-         
          
       });
      
