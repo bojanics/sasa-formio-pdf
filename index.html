@@ -55,6 +55,8 @@ req.onload = function (event) {
   form.emit('submitDone');
 }   
 
+var calcfuncurl = "https://sasa-test-misc.azurewebsites.net/api/hrlcalc?code=BMMYbW2EQ0B9CoZaloBv6lUM6NcCGdCPe9XAN1ndgPNPbZHmNS8OaQ==";
+
 window.onload = function() {
   Formio.createForm(document.getElementById('formio'), formObj,{i18n: {lng: 'de-AT', resources: {}}}).then(function(form) {
 
@@ -71,13 +73,29 @@ window.onload = function() {
       
       form.ready.then(function() {
          
-         console.log('fs='+JSON.stringify(form.submission));
+//         console.log('fs='+JSON.stringify(form.submission));
 //         var datamerged = $.extend(form.submission.data, qs);
 //         console.log('jsonmerge='+JSON.stringify(datamerged));
-         var initdata = calculate(form.submission.data);
-         console.log('id='+JSON.stringify(initdata));
-         var initjson = JSON.parse('{"data":'+JSON.stringify(initdata)+'}');
-         form.submission = initjson;
+//         var initdata = calculate(form.submission.data);
+//         console.log('id='+JSON.stringify(initdata));
+//         var initjson = JSON.parse('{"data":'+JSON.stringify(initdata)+'}');
+//         form.submission = initjson;
+         
+         $.ajax({
+            url: calcfuncurl,
+            type: "POST",
+            data: JSON.stringify(form.submission.data),
+            dataType: 'json',
+            contentType: 'application/json'                     
+         }).done(function(data) {
+            var jsonnew = JSON.parse('{"data":'+JSON.stringify(data)+'}');
+            console.log('submission ok, data='+JSON.stringify(data)+', jnew='+JSON.stringify(jsonnew));
+            form.submission = jsonnew;
+         }).fail(function(jqXHR, textStatus, err) {
+            console.log('submission failed, err='+err.toString()+', data='+JSON.stringify(event.data));
+         });
+         
+         
       });
      
       form.on('customEvent', function(event) {
