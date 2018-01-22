@@ -10,7 +10,6 @@
    <script src='json/hreleasing.json.js'></script>
    
    <script type='text/javascript'>
-var form = null;
 function parse_query_string(query) {
   var vars = query.split("&");
   var query_string = {};
@@ -52,7 +51,6 @@ req.onload = function (event) {
    newTabWindow.location.replace(req.response);
 };   
   
-  form.emit('submitDone');
 }   
 
 var calcfuncurl = "https://sasa-test-misc.azurewebsites.net/api/hrlcalc?code=BMMYbW2EQ0B9CoZaloBv6lUM6NcCGdCPe9XAN1ndgPNPbZHmNS8OaQ==";
@@ -126,7 +124,7 @@ window.onload = function() {
                if (event.component.key.lastIndexOf("fop") == (event.component.key.length - "fop".length)) {
                   alert('FOP currently can\'t do graphics');
                } else {
-                  getPDF('sleasing'+(isahf ? '' : '_forms_io_v1'),event.data,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
+                  getPDF('sleasing'+(isahf ? '_sleasing_forms_io_v1' : '-fullimgpaths'),event.data,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
                }
             } else if (event.type=='getSLeasingPDFNoSVGAndImages') {
                getPDF('sleasing-nosvgnoimages',event.data,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
