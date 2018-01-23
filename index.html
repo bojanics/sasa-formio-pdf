@@ -91,7 +91,7 @@ window.onload = function() {
             console.log('submission ok, data='+JSON.stringify(data)+', jnew='+JSON.stringify(jsonnew));
             form.submission = jsonnew;
          }).fail(function(jqXHR, textStatus, err) {
-            console.log('submission failed, err='+err.toString()+', data='+JSON.stringify(function.submission.data));
+            console.log('submission failed, err='+err.toString()+', data='+JSON.stringify(form.submission.data));
          });
          
       });
