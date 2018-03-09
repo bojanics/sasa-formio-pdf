@@ -29,7 +29,7 @@
 	xmlns:saxon="http://icl.com/saxon" extension-element-prefixes="saxon">
 
 
-<xsl:template match="NS1:form">
+<xsl:template match="*">
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
 <fo:layout-master-set>
 <fo:simple-page-master master-name="pagemaster1" page-height="845.0pt" page-width="598.0pt" margin-top="10.0pt" margin-left="10.0pt" margin-bottom="10.0pt" margin-right="10.0pt">
@@ -61,27 +61,22 @@
 <fo:block/>
 <xsl:variable name="backgroundColorVariable5">#ffffff</xsl:variable>
 <fo:block-container display-align="before" reference-orientation="0">
-<fo:block position="relative" text-align="start" color="#000000" font-family="Arial" font-size="11.0pt" line-height="14.5pt" white-space-collapse="false"  linefeed-treatment="preserve" white-space-treatment="ignore-if-surrounding-linefeed"  hyphenate="true" language="en"  padding-bottom="0.0pt" start-indent="0.0pt" end-indent="0.0pt" padding-top="28.45pt" width="518.0pt"  height="30.0pt" ><xsl:for-each select="NS1:item">
-<xsl:sort select="substring(@NS1:name,7,4)" order="ascending"/>
-<!-- <xsl:if test="contains(@NS1:name,'zeile_') and string-length(@NS1:value) &gt; 0 ">
-	<xsl:if test="contains(@NS1:name,'_header') ">
-		<fo:block position="relative" text-align="left" font-family="Calibri" font-style="bold" font-size="16.0pt" language="en"  padding-bottom="0.0pt" start-indent="0.0pt" end-indent="8.54pt" padding-top="0.0pt" display-align="center">
-			<xsl:text>&#xa;</xsl:text>
-			<xsl:text>&#xa;</xsl:text>
-	   		<xsl:value-of select="@NS1:value"/>
-	   		<xsl:text>&#xa;</xsl:text>
-		</fo:block>
-	</xsl:if>
-	<xsl:if test="string-length(@NS1:name) = 10 ">
--->
-		<xsl:value-of select="concat(@NS1:name,': ')" />
-   		<xsl:value-of select="@NS1:value"/>
-		<xsl:text>&#xa;</xsl:text>
-
-<!--	</xsl:if>
-</xsl:if>
--->
-</xsl:for-each></fo:block>
+<fo:block position="relative" text-align="start" color="#000000" font-family="Arial" font-size="11.0pt" line-height="14.5pt" white-space-collapse="false"  linefeed-treatment="preserve" white-space-treatment="ignore-if-surrounding-linefeed"  hyphenate="true" language="en"  padding-bottom="0.0pt" start-indent="0.0pt" end-indent="0.0pt" padding-top="28.45pt" width="518.0pt"  height="30.0pt" >
+<xsl:for-each select="NS1:item">
+   <xsl:if test="@NS1:name">
+      <xsl:value-of select="concat(@NS1:name,': ')" />
+      <xsl:value-of select="@NS1:value"/>
+      <xsl:text>&#xa;</xsl:text>
+   </xsl:if>
+</xsl:for-each>
+<xsl:for-each select="./*">
+   <xsl:if test="not(@NS1:name)">
+      <xsl:value-of select="concat(@name,': ')" />
+      <xsl:value-of select="@value"/>
+      <xsl:text>&#xa;</xsl:text>
+   </xsl:if>
+</xsl:for-each>
+</fo:block>
 </fo:block-container>
 <xsl:if test='position()=last()'>
   <fo:block id="lastPage"/>
