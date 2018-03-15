@@ -121,7 +121,7 @@ window.onload = function() {
             }
          }
          //var jsondata = event.data;
-         var jsondata = form.submission;
+         var jsondata = form.submission.data;
          if(event.component.key=='openPdfInBrowser') {
             getPDF('get_allitems',jsondata,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
          } else {
