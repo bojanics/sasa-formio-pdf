@@ -102,6 +102,7 @@ window.onload = function() {
          var should_sign_pdf = false;
          var should_lock_pdf_with_password = false;
          var pdf_tool_name = "ahformatter";
+         console.log('FSD='+JSON.stringify(form.submission));
          if(event.component.key.lastIndexOf("fop") == (event.component.key.length - "fop".length)) {
             pdf_tool_name="fop";
          } else if(event.component.key.lastIndexOf("altosoft") == (event.component.key.length - "altosoft".length)) {
@@ -119,19 +120,21 @@ window.onload = function() {
                should_lock_pdf_with_password=true;
             }
          }
+         //var jsondata = event.data;
+         var jsondata = form.submission;
          if(event.component.key=='openPdfInBrowser') {
-            getPDF('get_allitems',event.data,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
+            getPDF('get_allitems',jsondata,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
          } else {
             if (event.type=='getSLeasingPDF') {               
                if (event.component.key.lastIndexOf("fop") == (event.component.key.length - "fop".length)) {
                   alert('FOP currently can\'t do graphics');
                } else {
-                  getPDF('sleasing'+(isahf ? '_forms_io_v11' : '-fullimgpaths'),event.data,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
+                  getPDF('sleasing'+(isahf ? '_forms_io_v11' : '-fullimgpaths'),jsondata,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
                }
             } else if (event.type=='getSLeasingPDFNoSVGAndImages') {
-               getPDF('sleasing-nosvgnoimages',event.data,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
+               getPDF('sleasing-nosvgnoimages',jsondata,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
             } else if (event.type==='getPlainDataPDF') {
-               getPDF('get_allitems',event.data,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
+               getPDF('get_allitems',jsondata,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
             }
          }
       });
