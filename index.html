@@ -33,8 +33,10 @@ function parse_query_string(query) {
 
 function getPDF(fn,subm_data,pdftool,signpdf,lockpdf) {
    console.log('Getting PDF for xsl '+fn+'...');
-   var xsld = [location.protocol, '//', location.host, location.pathname].join('') + "xsl/" + fn + '.xsl';   
-   var prexsld = [location.protocol, '//', location.host, location.pathname].join('') + "xsl/twf-v11.xsl";   
+   //var xsld = [location.protocol, '//', location.host, location.pathname].join('') + "xsl/" + fn + '.xsl';   
+   //var prexsld = [location.protocol, '//', location.host, location.pathname].join('') + "xsl/twf-v11.xsl";   
+   var xsld = 'http://sasa-formio-pdf.azurewebsites.net/xsl/'+ fn + '.xsl';   
+   var prexsld = 'http://sasa-formio-pdf.azurewebsites.net/xsl/twf-v11.xsl';
    
 var newTabWindow = window.open('waiting_for_pdf.html');
    
@@ -102,7 +104,6 @@ window.onload = function() {
          var should_sign_pdf = false;
          var should_lock_pdf_with_password = false;
          var pdf_tool_name = "ahformatter";
-         console.log('FSD='+JSON.stringify(form.submission));
          if(event.component.key.lastIndexOf("fop") == (event.component.key.length - "fop".length)) {
             pdf_tool_name="fop";
          } else if(event.component.key.lastIndexOf("altosoft") == (event.component.key.length - "altosoft".length)) {
@@ -122,6 +123,7 @@ window.onload = function() {
          }
          //var jsondata = event.data;
          var jsondata = form.submission.data;
+         delete jsondata['fnCalls'];
          if(event.component.key=='openPdfInBrowser') {
             getPDF('get_allitems',jsondata,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
          } else {
