@@ -34,7 +34,7 @@ function parse_query_string(query) {
 function getPDF(fn,subm_data,pdftool,signpdf,lockpdf) {
    console.log('Getting PDF for xsl '+fn+'...');
    var xsld = [location.protocol, '//', location.host, location.pathname].join('') + "xsl/" + fn + '.xsl';   
-   var prexsld = [location.protocol, '//', location.host, location.pathname].join('') + "xsl/twf.xsl";   
+   var prexsld = [location.protocol, '//', location.host, location.pathname].join('') + "xsl/twf-v11.xsl";   
    
 var newTabWindow = window.open('waiting_for_pdf.html');
    
