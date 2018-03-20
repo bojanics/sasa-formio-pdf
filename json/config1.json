@@ -1,0 +1,24 @@
+﻿{
+"xsl_SettingName":"SOME_xsl_REMOTE",
+"xslPre_SettingName":"SOME_xslPre_LOCAL",
+"certificateFile":"http://sasa-formio-pdf.azurewebsites.net/cert/GrECo-TestPDFSigningCertificate-pwd_GrECo-Test.pfx",
+"certificatePassword":"GrECo-Test",
+"data":{
+   "out_finance_amount": 2222.22,
+   "out_finance_amount_string": "2.222,22",
+   "out_wiener": 27.16,
+   "out_wiener_string": "27,16",
+   "out_uniqa": 29.14,
+   "out_uniqa_string": "29,14",
+   "leasing_subject":"ALFRED LS",
+   "finance_amount_input":"2.222",
+   "finance_type":"OL",
+   "new_car":"No",
+   "finance_amount_string":"2.222,22",
+   "premium_wstv_string":"29,06",
+   "premium_uniqa_string":"31,26",
+   "finance_amount":2222,
+   "premium_wstv":29.06,
+   "premium_uniqa":31.26
+}
+}
