@@ -20,7 +20,7 @@
 	"lockPDF": false,
 	"lockPDF_SettingName": "SOME_lockPDF",
 	"lockPDFPassword": "password",
-	"lockPDFPassword_ConnectionStringName": "SOME_lockPDFPassword"
+	"lockPDFPassword_ConnectionStringName": "SOME_lockPDFPassword",
 	"data": {
 		"info1": "val1",
 		"info2": "val2",
