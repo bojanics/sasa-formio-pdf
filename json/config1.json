@@ -20,10 +20,7 @@
 	"lockPDF": false,
 	"lockPDF_SettingName": "SOME_lockPDF",
 	"lockPDFPassword": "password",
-	"lockPDFPassword_ConnectionStringName": "SOME_lockPDFPassword""xsl_SettingName": "SOME_xsl_REMOTE",
-	"xslPre_SettingName": "SOME_xslPre_LOCAL",
-	"certificateFile": "http://sasa-formio-pdf.azurewebsites.net/cert/GrECo-TestPDFSigningCertificate-pwd_GrECo-Test.pfx",
-	"certificatePassword": "GrECo-Test",
+	"lockPDFPassword_ConnectionStringName": "SOME_lockPDFPassword"
 	"data": {
 		"info1": "val1",
 		"info2": "val2",
