@@ -6,9 +6,7 @@
    <script src='lib/formio.full.min.js'></script>
    <script src='lib/jquery-3.2.1.min.js'></script>
    <script src='calc/calc.js'></script>
-   <!--<script src='json/form.json.js'></script>-->
-   <!--<script src='json/hreleasing.json.js'></script>-->
-   <script src='json/hreleasing-v11.json.js'></script>
+   <script src='json/hreleasing.json.js'></script>
    
    <script type='text/javascript'>
 function parse_query_string(query) {
@@ -36,7 +34,7 @@ function getPDF(fn,subm_data,pdftool,signpdf,lockpdf) {
    //var xsld = [location.protocol, '//', location.host, location.pathname].join('') + "xsl/" + fn + '.xsl';   
    //var prexsld = [location.protocol, '//', location.host, location.pathname].join('') + "xsl/twf-v11.xsl";   
    var xsld = 'http://sasa-formio-pdf.azurewebsites.net/xsl/'+ fn + '.xsl';   
-   var prexsld = 'http://sasa-formio-pdf.azurewebsites.net/xsl/twf-v11.xsl';
+   var prexsld = 'http://sasa-formio-pdf.azurewebsites.net/xsl/defaultPre.xsl';
    
 var newTabWindow = window.open('waiting_for_pdf.html');
    
@@ -57,7 +55,6 @@ req.onload = function (event) {
 }   
 
 var calcfuncurl = "https://sasa-test-misc.azurewebsites.net/api/hrl?code=GxSNfaYk2Omu3vSOyBOHvsX6t/bRBxaXt9Wo9qBtrpxuKR9DX2ChjA==";
-                   
 
 window.onload = function() {
   Formio.createForm(document.getElementById('formio'), formObj,{i18n: {lng: 'de-AT', resources: {}}}).then(function(form) {
@@ -87,11 +84,12 @@ window.onload = function() {
          $.ajax({
             url: calcfuncurl,
             type: "POST",
-            data: JSON.stringify(form.submission.data),
+            data: JSON.stringify(transformJSONForm2Calc(form.submission.data)),
             dataType: 'json',
             contentType: 'application/json'                     
          }).done(function(data) {
-            var jsonnew = JSON.parse('{"data":'+JSON.stringify(data)+'}');
+            var jn=$.extend(form.submission.data, data);
+            var jsonnew = JSON.parse('{"data":'+JSON.stringify(jn)+'}');
             console.log('submission ok, data='+JSON.stringify(data)+', jnew='+JSON.stringify(jsonnew));
             form.submission = jsonnew;
          }).fail(function(jqXHR, textStatus, err) {
@@ -123,7 +121,6 @@ window.onload = function() {
          }
          //var jsondata = event.data;
          var jsondata = form.submission.data;
-         delete jsondata['fnCalls'];
          if(event.component.key=='openPdfInBrowser') {
             getPDF('get_allitems',jsondata,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
          } else {
@@ -131,7 +128,7 @@ window.onload = function() {
                if (event.component.key.lastIndexOf("fop") == (event.component.key.length - "fop".length)) {
                   alert('FOP currently can\'t do graphics');
                } else {
-                  getPDF('sleasing'+(isahf ? '_forms_io_v11' : '-fullimgpaths'),jsondata,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
+                  getPDF('sleasing'+(isahf ? 'v12' : '-fullimgpaths'),jsondata,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
                }
             } else if (event.type=='getSLeasingPDFNoSVGAndImages') {
                getPDF('sleasing-nosvgnoimages',jsondata,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
@@ -145,6 +142,18 @@ window.onload = function() {
    
   
 };
+
+function transformJSONForm2Calc(formjson){
+   var tjson = {};
+   tjson.production="BO1001";
+   tjson.leasing_subject=formjson.inp_leasing_subject;
+   tjson.finance_amount_input=formjson.Inp_finance_amount;
+   tjson.finance_type=formjson.tip_fin;
+   tjson.new_car=formjson.inp_new;
+   tjson.currency=formjson.inp_currency;
+   return tjson;
+}
+
 
    </script>
 </head>
