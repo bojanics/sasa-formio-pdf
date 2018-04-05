@@ -1,3 +1,4 @@
+(function(exports){
 exports.calculate = function (co){
 var eeisus=0;var eetrue="TRUE";var eefalse="FALSE";var eedec=",";var eeth=".";var eedecreg=new RegExp(",","g");var eethreg=new RegExp("\\.","g");var eecurrencyreg=new RegExp("RSD","g");var eepercentreg=new RegExp("%","g");
 var fnCalls= new Array();
@@ -93,3 +94,4 @@ function eeisnumber(v){if((v==null)||isNaN(v)||v==Number.NEGATIVE_INFINITY||v==N
 function iserror(x){if(typeof x=='number'){return(isNaN(x)||!isFinite(x))}else return false;};
 return calc(co);
 }
+})(typeof exports === 'undefined'? this['calc']={}: exports);
