@@ -1,0 +1,170 @@
+﻿<html>
+<head>
+  <meta charset="utf-8">
+   <link rel='stylesheet' href='lib/bootstrap.min.css'>
+   <link rel='stylesheet' href='lib/formio.full.min.css'>
+   <script src='lib/formio.full.min.js'></script>
+   <script src='lib/jquery-3.2.1.min.js'></script>
+   <script src='calc/calc_v12.js'></script>
+   <script src='json/hreleasing.json.js'></script>
+   
+   <script type='text/javascript'>
+function parse_query_string(query) {
+  var vars = query.split("&");
+  var query_string = {};
+  for (var i = 0; i < vars.length; i++) {
+    var pair = vars[i].split("=");
+    // If first entry with this name
+    if (typeof query_string[pair[0]] === "undefined") {
+      query_string[pair[0]] = decodeURIComponent(pair[1]);
+      // If second entry with this name
+    } else if (typeof query_string[pair[0]] === "string") {
+      var arr = [query_string[pair[0]], decodeURIComponent(pair[1])];
+      query_string[pair[0]] = arr;
+      // If third or later entry with this name
+    } else {
+      query_string[pair[0]].push(decodeURIComponent(pair[1]));
+    }
+  }
+  return query_string;
+}   
+
+function getPDF(fn,subm_data,pdftool,signpdf,lockpdf) {
+   console.log('Getting PDF for xsl '+fn+'...');
+   //var xsld = [location.protocol, '//', location.host, location.pathname].join('') + "xsl/" + fn + '.xsl';   
+   //var prexsld = [location.protocol, '//', location.host, location.pathname].join('') + "xsl/twf-v11.xsl";   
+   var xsld = 'http://sasa-formio-pdf.azurewebsites.net/xsl/'+ fn + '.xsl';   
+   var prexsld = 'http://sasa-formio-pdf.azurewebsites.net/xsl/defaultPre.xsl';
+   
+var newTabWindow = window.open('waiting_for_pdf.html');
+   
+var req = new XMLHttpRequest();
+//req.open("POST", "https://sasapdfproxy.azurewebsites.net/pdf", true);
+req.open("POST", "https://sasa-test-pdf-proxy.azurewebsites.net/pdf",true);
+req.responseType = "text";
+req.setRequestHeader("Content-type", "application/json");
+req.send('{"data" : '+JSON.stringify(subm_data)+',"xsl" : "'+xsld+'","xslPre" : "'+prexsld+'","lockPdfWithPassword" : '+lockpdf+',"signPdf":'+signpdf+',"pdf_tool_name":"'+pdftool+'"}');
+
+req.onload = function (event) {
+   var d = new Date();
+   var fname = fn+'_'+d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()+'-'+d.getHours()+'-'+d.getMinutes()+'-'+d.getSeconds()+'-'+d.getMilliseconds()+'.pdf';
+   console.log('pdfloc='+req.response);
+   newTabWindow.location.replace(req.response);
+};   
+  
+}   
+
+var calcfuncurl = "https://sasa-test-misc.azurewebsites.net/api/hrl?code=GxSNfaYk2Omu3vSOyBOHvsX6t/bRBxaXt9Wo9qBtrpxuKR9DX2ChjA==";
+
+window.onload = function() {
+  Formio.createForm(document.getElementById('formio'), formObj,{i18n: {lng: 'de-AT', resources: {}}}).then(function(form) {
+
+      var query = window.location.search.substring(1);
+      var qs = '{}';
+      if (query!=null && query!='') {
+         var qs = parse_query_string(query);
+      }
+      var fa = qs['inpfinanceamount'];
+      if (fa) {
+         qs['inpfinanceamount']=parseInt(fa);
+      }
+      form.submission = {"data":qs};  
+      
+      form.ready.then(function() {
+/*         
+         console.log('fs='+JSON.stringify(form.submission));
+         var datamerged = $.extend(form.submission.data, qs);
+         console.log('jsonmerge='+JSON.stringify(datamerged));
+         var initdata = calculate(form.submission.data);
+         console.log('id='+initdata);
+         var initjson = JSON.parse('{"data":'+initdata+'}');
+         form.submission = initjson;
+*/         
+         
+         $.ajax({
+            url: calcfuncurl,
+            type: "POST",
+            data: JSON.stringify(transformJSONForm2Calc(form.submission.data)),
+            dataType: 'json',
+            contentType: 'application/json'                     
+         }).done(function(data) {
+            var jn=$.extend(form.submission.data, data);
+            var jsonnew = JSON.parse('{"data":'+JSON.stringify(jn)+'}');
+            console.log('submission ok, data='+JSON.stringify(data)+', jnew='+JSON.stringify(jsonnew));
+            form.submission = jsonnew;
+         }).fail(function(jqXHR, textStatus, err) {
+            console.log('submission failed, err='+err.toString()+', data='+JSON.stringify(form.submission.data));
+         });
+         
+      });
+     
+      form.on('customEvent', function(event) {
+         var should_sign_pdf = false;
+         var should_lock_pdf_with_password = false;
+         var pdf_tool_name = "ahformatter";
+         if(event.component.key.lastIndexOf("fop") == (event.component.key.length - "fop".length)) {
+            pdf_tool_name="fop";
+         } else if(event.component.key.lastIndexOf("altosoft") == (event.component.key.length - "altosoft".length)) {
+            pdf_tool_name="altosoft";
+         }
+         var isahf = event.component.key.lastIndexOf("ahformatter")!=-1;
+         if (isahf) {
+         console.log('ahformatter');
+            if(event.component.key.lastIndexOf("signed")!=-1) {
+               console.log('..signing');
+               should_sign_pdf=true;
+            }
+            if(event.component.key.lastIndexOf("password")!=-1) {
+               console.log('..pwd protecting');
+               should_lock_pdf_with_password=true;
+            }
+         }
+         //var jsondata = event.data;
+         var jsondata = form.submission.data;
+         if(event.component.key=='openPdfInBrowser') {
+            getPDF('get_allitems',jsondata,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
+         } else {
+            if (event.type=='getSLeasingPDF') {               
+               if (event.component.key.lastIndexOf("fop") == (event.component.key.length - "fop".length)) {
+                  alert('FOP currently can\'t do graphics');
+               } else {
+                  getPDF('sleasing'+(isahf ? 'v12' : '-fullimgpaths'),jsondata,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
+               }
+            } else if (event.type=='getSLeasingPDFNoSVGAndImages') {
+               getPDF('sleasing-nosvgnoimages',jsondata,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
+            } else if (event.type==='getPlainDataPDF') {
+               getPDF('get_allitems',jsondata,pdf_tool_name,should_sign_pdf,should_lock_pdf_with_password);
+            }
+         }
+      });
+   
+   });
+   
+  
+};
+
+function transformJSONForm2Calc(formjson){
+   var tjson = {};
+   tjson.production="BO1001";
+   tjson.leasing_subject=formjson.inp_leasing_subject;
+   tjson.finance_amount_input=formjson.Inp_finance_amount;
+   tjson.finance_type=formjson.tip_fin;
+   tjson.new_car=formjson.inp_new;
+   tjson.currency=formjson.inp_currency;
+   return tjson;
+}
+
+
+   </script>
+</head>
+<body>
+<div class="container bg-faded">
+   <div class="row">
+        <div class="col-12" id="formio"></div>
+    </div>
+ </div>
+<div class="center" id="holder"></div>
+
+</body>
+</html>
+
